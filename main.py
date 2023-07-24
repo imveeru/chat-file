@@ -7,6 +7,7 @@ from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import VertexAIEmbeddings
 from langchain.vectorstores import FAISS
+from langchain.chains.question_answering import load_qa_chain
 
 st.set_page_config(
     page_title="ChatFile",
@@ -87,7 +88,10 @@ if uploaded_file is not None:
                     response = agent.run(prompt)
                 elif extension==".pdf":
                     docs=knowledge_base.similarity_search(prompt)
-                    st.write(docs)
+                    #st.write(docs)
+                    llm=VertexAI()
+                    chain = load_qa_chain(llm, chain_type="stuff")
+                    response=chain.run(input_documents=docs, question=prompt)
         
         with st.chat_message("assistant"):
             st.markdown(response)
