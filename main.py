@@ -2,6 +2,7 @@ import streamlit as st
 from langchain.agents import create_pandas_dataframe_agent
 from langchain.llms import VertexAI
 import pandas as pd
+import os
 
 st.set_page_config(
     page_title="ChatFile",
@@ -25,15 +26,23 @@ uploaded_file=st.file_uploader("Upload your file!")
 st.caption("Only CSV and PDF files are supported.")
 
 if uploaded_file is not None:
-    #LLM Operations
-    df=pd.read_csv(uploaded_file)
-    #st.dataframe(df)
-    with st.spinner("Reading the uploaded file..."):
-        llm = VertexAI()
-        agent=create_pandas_dataframe_agent(llm, df,verbose=True)
+    #handling file format
+    extension=os.path.splitext(uploaded_file.name)[1]
     
+    if extension==".csv":
+        df=pd.read_csv(uploaded_file)
+        #LLM Operations
+        with st.spinner("Reading the uploaded file..."):
+            llm = VertexAI()
+            agent=create_pandas_dataframe_agent(llm, df,verbose=True)
+    elif extension==".pdf":
+        st.info("Coming Soon...",icon="🔥")
+    else:
+        st.error("Only CSV or PDF files can be uploaded")
+        st.stop()
+        
     with st.chat_message("assistant"):
-            st.markdown("👋Hello! Ask me your questions related to the uploaded file.")
+            st.markdown(f"👋Hello! Ask me your questions related to the uploaded {extension.upper()[1:]} file.")
     # User Interface
     if "messages" not in st.session_state:
         st.session_state.messages = []
