@@ -5,6 +5,8 @@ import pandas as pd
 import os
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import VertexAIEmbeddings
+from langchain.vectorstores import FAISS
 
 st.set_page_config(
     page_title="ChatFile",
@@ -53,18 +55,24 @@ if uploaded_file is not None:
         
         chunks=text_splitter.split_text(text)
         
-        st.write(chunks)
+        embeddings = VertexAIEmbeddings()
+        
+        knowledge_base=FAISS.from_texts(chunks,embeddings)
+        
+        
         
     else:
         st.error("Only CSV or PDF files can be uploaded")
         st.stop()
-        
+    
+    #welcome message   
     with st.chat_message("assistant"):
             st.markdown(f"👋Hello! Ask me your questions related to the uploaded {extension.upper()[1:]} file.")
     # User Interface
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
+    #message history
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"],unsafe_allow_html=True)
@@ -75,7 +83,11 @@ if uploaded_file is not None:
 
         if prompt is not None and prompt != "":
             with st.spinner("Generating response..."):
-                response = agent.run(prompt)
+                if extension==".csv":
+                    response = agent.run(prompt)
+                elif extension==".pdf":
+                    docs=knowledge_base.similarity_search(prompt)
+                    st.write(docs)
         
         with st.chat_message("assistant"):
             st.markdown(response)
