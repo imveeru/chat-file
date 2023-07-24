@@ -32,13 +32,15 @@ if uploaded_file is not None:
         llm = VertexAI()
         agent=create_pandas_dataframe_agent(llm, df,verbose=True)
     
+    with st.chat_message("assistant"):
+            st.markdown("👋Hello! Ask me your questions related to the uploaded file.")
     # User Interface
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+            st.markdown(message["content"],unsafe_allow_html=True)
 
     if prompt := st.chat_input("Ask your question..."):
         st.chat_message("user").markdown(prompt)
