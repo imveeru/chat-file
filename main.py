@@ -28,8 +28,9 @@ if uploaded_file is not None:
     #LLM Operations
     df=pd.read_csv(uploaded_file)
     #st.dataframe(df)
-    llm = VertexAI()
-    agent=create_pandas_dataframe_agent(llm, df,verbose=True)
+    with st.spinner("Reading the uploaded file..."):
+        llm = VertexAI()
+        agent=create_pandas_dataframe_agent(llm, df,verbose=True)
     
     # User Interface
     if "messages" not in st.session_state:
@@ -44,7 +45,8 @@ if uploaded_file is not None:
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         if prompt is not None and prompt != "":
-            response = agent.run(prompt)
+            with st.spinner("Generating response..."):
+                response = agent.run(prompt)
         
         with st.chat_message("assistant"):
             st.markdown(response)
