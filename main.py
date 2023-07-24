@@ -3,6 +3,8 @@ from langchain.agents import create_pandas_dataframe_agent
 from langchain.llms import VertexAI
 import pandas as pd
 import os
+from PyPDF2 import PdfReader
+from lan
 
 st.set_page_config(
     page_title="ChatFile",
@@ -36,7 +38,13 @@ if uploaded_file is not None:
             llm = VertexAI()
             agent=create_pandas_dataframe_agent(llm, df,verbose=True)
     elif extension==".pdf":
-        st.info("Coming Soon...",icon="🔥")
+        pdf_reader=PdfReader(uploaded_file)
+        text=""
+        for page in pdf_reader.pages:
+            text+=page.extract_text()
+        
+        st.write(text)
+        
     else:
         st.error("Only CSV or PDF files can be uploaded")
         st.stop()
