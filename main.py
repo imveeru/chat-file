@@ -4,7 +4,7 @@ from langchain.llms import VertexAI
 import pandas as pd
 import os
 from PyPDF2 import PdfReader
-from lan
+from langchain.text_splitter import CharacterTextSplitter
 
 st.set_page_config(
     page_title="ChatFile",
@@ -43,7 +43,17 @@ if uploaded_file is not None:
         for page in pdf_reader.pages:
             text+=page.extract_text()
         
-        st.write(text)
+        #split into chunks
+        text_splitter=CharacterTextSplitter(
+            separator="\n",
+            chunk_size=1000,
+            chunk_overlap=250,
+            length_function=len
+        )
+        
+        chunks=text_splitter.split_text(text)
+        
+        st.write(chunks)
         
     else:
         st.error("Only CSV or PDF files can be uploaded")
