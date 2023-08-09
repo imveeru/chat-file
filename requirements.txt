@@ -1,0 +1,6 @@
+langchain
+streamlit 
+pandas
+PyPDF2
+google-cloud-aiplatform
+vertexai
