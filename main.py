@@ -9,6 +9,13 @@ from langchain.embeddings import VertexAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 
+from dotenv import dotenv_values
+config = dotenv_values(".env")
+
+import os
+import json
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']=json.loads(config["GOOGLE_APPLICATION_CREDENTIALS"])
+
 st.set_page_config(
     page_title="ChatFile",
     page_icon="📈",
