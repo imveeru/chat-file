@@ -14,7 +14,8 @@ config = dotenv_values(".env")
 
 import os
 import json
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']=json.loads(config["GOOGLE_APPLICATION_CREDENTIALS"])
+json_key=config["GOOGLE_APPLICATION_CREDENTIALS"]
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']=json.loads(json_key)
 
 st.set_page_config(
     page_title="ChatFile",
