@@ -11,6 +11,7 @@ from langchain.chains.question_answering import load_qa_chain
 
 from dotenv import dotenv_values
 config = dotenv_values(".env")
+print(config)
 
 import os
 import json
