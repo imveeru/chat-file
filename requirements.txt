@@ -4,3 +4,4 @@ pandas
 PyPDF2
 google-cloud-aiplatform
 vertexai
+google-auth
