@@ -9,14 +9,12 @@ from langchain.embeddings import VertexAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 
-# from dotenv import dotenv_values
-# config = dotenv_values(".env")
-# print(config)
-
-# import os
-# import json
-# json_key=config["GOOGLE_APPLICATION_CREDENTIALS"]
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS']=json.loads(json_key)
+import google.generativeai as palm
+from google.auth import credentials
+from google.oauth2 import service_account
+import google.cloud.aiplatform as aiplatform
+import vertexai
+from vertexai.language_models import TextGenerationModel
 
 st.set_page_config(
     page_title="ChatFile",
@@ -35,6 +33,21 @@ header {visibility: hidden;}
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 st.title("📈ChatFile")
+
+config = st.secrets["GOOGLE_APPLICATION_CREDENTIALS"]
+service_account_info=json.loads(config)
+service_account_info["private_key"]=service_account_info["private_key"].replace("\\n","\n")
+
+my_credentials = service_account.Credentials.from_service_account_info(
+    service_account_info
+)
+# Initialize Google AI Platform with project details and credentials
+aiplatform.init(
+    credentials=my_credentials,
+)
+project_id = service_account_info["project_id"]
+
+vertexai.init(project=project_id, location="us-central1")
 
 uploaded_file=st.file_uploader("Upload your file!")
 st.caption("Only CSV and PDF files are supported.")
@@ -68,8 +81,7 @@ if uploaded_file is not None:
         embeddings = VertexAIEmbeddings()
         
         knowledge_base=FAISS.from_texts(chunks,embeddings)
-        
-        
+
         
     else:
         st.error("Only CSV or PDF files can be uploaded")
