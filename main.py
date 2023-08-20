@@ -8,7 +8,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import VertexAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
-
+import json
 import google.generativeai as palm
 from google.auth import credentials
 from google.oauth2 import service_account
